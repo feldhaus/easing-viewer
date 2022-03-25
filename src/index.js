@@ -59,7 +59,9 @@ function drawAll() {
     GRAPH_PAD,
     GRAPH_WIDTH,
     graphSpaceRow,
-    rows + overflow,
+    rows,
+    overflowTop,
+    overflowBottom,
   );
   drawCols(ctx, GRAPH_PAD, GRAPH_PAD, graphSpaceCol, GRAPH_HEIGHT, cols);
   drawAxis(ctx, GRAPH_PAD, GRAPH_PAD, GRAPH_WIDTH, GRAPH_HEIGHT, zeroY);
@@ -112,4 +114,4 @@ easingElem.addEventListener('change', (event) => {
   setEasingFromList(event.target.value);
 });
 
-setEasingFromList(17);
+setEasingFromList(33);

@@ -158,28 +158,20 @@ export const EASING = [
   },
 ];
 
-// export const COLORS = {
-//   background:,
-//   currentLine:,
-//   foreground:,
-//   comment:,
-//   cyan:,
-//   green:,
-//   orange:,
-//   pink:,
-//   purble:,
-//   red:,
-//   yellow:,
-// }
-
 export const STYLE = {
   grid: {
     color: '#e0e0e0',
     lineWidth: 1,
+    font: `${GRAPH_FONT_SIZE}pt verdana`,
+    textAlign: 'right',
+    fillStyle: '#282a36',
   },
   axis: {
-    color: 'black',
+    color: '#282a36',
     lineWidth: 2,
+    font: `${GRAPH_FONT_SIZE}pt verdana`,
+    textAlign: 'center',
+    fillStyle: '#6272a4',
   },
   graph: {
     color: '#ff79c6',
