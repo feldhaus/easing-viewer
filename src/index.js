@@ -2,6 +2,8 @@
 import { createEditor } from './create-editor';
 import {
   EASING,
+  GRAPH_ROWS,
+  GRAPH_COLS,
   GRAPH_WIDTH,
   TOTAL_WIDTH,
   TOTAL_HEIGHT,
@@ -15,6 +17,7 @@ import { drawRows } from './draw/draw-rows';
 import { drawCols } from './draw/draw-cols';
 import { drawAxis } from './draw/draw-axis';
 import { drawGraph } from './draw/draw-graph';
+import { drawAnim } from './draw/draw-anim';
 
 // -------------------------------------------------------------------
 
@@ -23,12 +26,20 @@ let currentFunction;
 
 // -------------------------------------------------------------------
 
-const ctx = document.getElementById('graph').getContext('2d');
+const context = document.getElementById('graph').getContext('2d');
 const editorElem = document.getElementById('editor-container');
 const easingElem = document.getElementById('easing-list');
 const editor = createEditor();
 
 // -------------------------------------------------------------------
+
+let overflowTop;
+let overflowBottom;
+let overflow;
+let graphSpaceRow;
+let graphSpaceCol;
+let zeroY;
+let innerHeight;
 
 function drawAll() {
   let max = OVERFLOW_TOP;
@@ -39,33 +50,44 @@ function drawAll() {
     min = Math.min(min, t);
   }
 
-  const overflowTop = Math.ceil((max - OVERFLOW_TOP) * 10);
-  const overflowBottom = Math.ceil((OVERFLOW_BOTTOM - min) * 10);
-  const overflow = overflowTop + overflowBottom;
+  overflowTop = Math.ceil((max - OVERFLOW_TOP) * GRAPH_ROWS);
+  overflowBottom = Math.ceil((OVERFLOW_BOTTOM - min) * GRAPH_ROWS);
+  overflow = overflowTop + overflowBottom;
 
-  const cols = 10;
-  const rows = 10;
+  graphSpaceRow = GRAPH_HEIGHT / (GRAPH_ROWS + overflow);
+  graphSpaceCol = GRAPH_WIDTH / GRAPH_COLS;
+  zeroY = GRAPH_PAD + (GRAPH_ROWS + overflowTop) * graphSpaceRow;
+  innerHeight = GRAPH_HEIGHT - overflow * graphSpaceRow;
 
-  const graphSpaceRow = GRAPH_HEIGHT / (rows + overflow);
-  const graphSpaceCol = GRAPH_WIDTH / cols;
-  const zeroY = GRAPH_PAD + (rows + overflowTop) * graphSpaceRow;
-  const innerHeight = GRAPH_HEIGHT - overflow * graphSpaceRow;
-
-  ctx.clearRect(0, 0, TOTAL_WIDTH, TOTAL_HEIGHT);
+  context.clearRect(0, 0, TOTAL_WIDTH, TOTAL_HEIGHT);
 
   drawRows(
-    ctx,
+    context,
     GRAPH_PAD,
     GRAPH_PAD,
     GRAPH_WIDTH,
     graphSpaceRow,
-    rows,
+    GRAPH_ROWS,
     overflowTop,
     overflowBottom,
   );
-  drawCols(ctx, GRAPH_PAD, GRAPH_PAD, graphSpaceCol, GRAPH_HEIGHT, cols);
-  drawAxis(ctx, GRAPH_PAD, GRAPH_PAD, GRAPH_WIDTH, GRAPH_HEIGHT, zeroY);
-  drawGraph(ctx, GRAPH_PAD, zeroY, GRAPH_WIDTH, innerHeight, currentFunction);
+  drawCols(
+    context,
+    GRAPH_PAD,
+    GRAPH_PAD,
+    graphSpaceCol,
+    GRAPH_HEIGHT,
+    GRAPH_COLS,
+  );
+  drawAxis(context, GRAPH_PAD, GRAPH_PAD, GRAPH_WIDTH, GRAPH_HEIGHT, zeroY);
+  drawGraph(
+    context,
+    GRAPH_PAD,
+    zeroY,
+    GRAPH_WIDTH,
+    innerHeight,
+    currentFunction,
+  );
 }
 
 function updateFunction() {
@@ -115,3 +137,28 @@ easingElem.addEventListener('change', (event) => {
 });
 
 setEasingFromList(33);
+
+// -------------------------------------------------------------------
+
+let now;
+let then = Date.now();
+let elapsed;
+
+const fps = 60;
+const fpsInterval = 1000 / fps;
+const startTime = then;
+
+function animate() {
+  requestAnimationFrame(animate);
+  now = Date.now();
+  elapsed = now - then;
+
+  if (elapsed < fpsInterval) return;
+  then = now - (elapsed % fpsInterval);
+
+  if (!currentFunction) return;
+  const progress = currentFunction(((now - startTime) % 3000) / 3000);
+  context.clearRect(TOTAL_WIDTH - 10, 0, 20, context.canvas.height);
+  drawAnim(context, TOTAL_WIDTH, GRAPH_PAD, GRAPH_HEIGHT, innerHeight, zeroY, progress);
+}
+animate();

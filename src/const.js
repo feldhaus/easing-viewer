@@ -1,3 +1,5 @@
+export const GRAPH_ROWS = 10;
+export const GRAPH_COLS = 10;
 export const GRAPH_PAD = 40;
 export const GRAPH_TEXT_PAD = 5;
 export const GRAPH_MAX_Y = 10;
@@ -147,6 +149,26 @@ export const EASING = [
     value:
       'const c5 = (2 * Math.PI) / 4.5;\nreturn x === 0\n  ? 0\n  : x === 1\n  ? 1\n  : x < 0.5\n  ? -(2 ** (20 * x - 10) * Math.sin((20 * x - 11.125) * c5)) / 2\n  : (2 ** (-20 * x + 10) * Math.sin((20 * x - 11.125) * c5)) / 2 + 1;',
   },
+  { name: '[Bounce]', value: null },
+  {
+    name: 'Bounce-In',
+    value:
+      'x = 1 - x;\nconst n1 = 7.5625;\nconst d1 = 2.75;\nif (x < 1 / d1) {\n  return 1 - (n1 * x * x);\n} else if (x < 2 / d1) {\n  return 1 - (n1 * (x -= 1.5 / d1) * x + 0.75);\n} else if (x < 2.5 / d1) {\n  return 1 - (n1 * (x -= 2.25 / d1) * x + 0.9375);\n} else {\n  return 1 - (n1 * (x -= 2.625 / d1) * x + 0.984375);\n}',
+  },
+  {
+    name: 'Bounce-Out',
+    value:
+      'const n1 = 7.5625;\nconst d1 = 2.75;\nif (x < 1 / d1) {\n  return n1 * x * x;\n} else if (x < 2 / d1) {\n  return n1 * (x -= 1.5 / d1) * x + 0.75;\n} else if (x < 2.5 / d1) {\n  return n1 * (x -= 2.25 / d1) * x + 0.9375;\n} else {\n  return n1 * (x -= 2.625 / d1) * x + 0.984375;\n}',
+  },
+  { name: '[Wiggle]', value: null },
+  {
+    name: 'Wiggle-In',
+    value: 'const cycles = 5.0;\nreturn Math.sin(2 * cycles * Math.PI * x) * x;',
+  },
+  {
+    name: 'Wiggle-Out',
+    value: 'const cycles = 5.0;\nreturn Math.sin(2 * cycles * Math.PI * x) * (1 - x);',
+  },
   { name: '[Custom]', value: null },
   {
     name: 'Steps',
@@ -172,6 +194,12 @@ export const STYLE = {
     font: `${GRAPH_FONT_SIZE}pt verdana`,
     textAlign: 'center',
     fillStyle: '#6272a4',
+  },
+  animation: {
+    color: '#e0e0e0',
+    lineWidth: 1,
+    fillStyle: '#ff79c6',
+    radius: 8,
   },
   graph: {
     color: '#ff79c6',
